@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'classify'
 ]
 
 MIDDLEWARE = [
@@ -50,11 +52,13 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'lunghisto.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR,"templates"),
+            os.path.join(BASE_DIR,"media"),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -122,15 +126,11 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-import cv2
+
 import keras
-import numpy as np
-from tkinter import *
 import tensorflow as tf
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
-
-
+from keras.models import Sequential, Model
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 
 class koreksi_gamma(keras.layers.Layer):
     def __init__(self,gamma, **kwargs):
@@ -165,29 +165,13 @@ def mymodel(gamma):
 
 def loadmodel():
     model= mymodel(1.2)
-    model_terbaik="Weight.hdf5"
+    model_terbaik="static/Weight.hdf5"
     model.load_weights(model_terbaik)
     return model
 
-def readimg(fn):
-    img = cv2.imread(fn)
-    rgb=cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    rez=cv2.resize(rgb,(270,270))
-    resc=rez/255
-    return resc
+MYMODEL = loadmodel()
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-def klasifikasi(model, image):
-    img=cv2.resize(image,(128,128))
-    img=np.expand_dims(img,axis=0)
-    prediksi=model.predict(img)
-    y_prediksi=np.argmax(prediksi, axis=1)[0]
-    kelas=["Adenocarsinoma","Normal","Squamous Cell Carcinoma"]
-    if y_prediksi == 0:
-        out=kelas[0]
-    elif y_prediksi == 1:
-        out=kelas[1]
-    elif y_prediksi == 2:
-        out=kelas[2]
-    return out
 
-lungmodel = loadmodel()
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
