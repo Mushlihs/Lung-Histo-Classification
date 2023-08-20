@@ -56,8 +56,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR,"templates"),
-            os.path.join(BASE_DIR,"media"),
+            os.path.join(BASE_DIR,"templates")
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -119,7 +118,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -169,8 +168,10 @@ def loadmodel():
     model.load_weights(model_terbaik)
     return model
 
-MYMODEL = loadmodel()
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+LUNGMODEL = loadmodel()
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
 
 
 MEDIA_URL = '/media/'

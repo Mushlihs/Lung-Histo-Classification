@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import JsonResponse,HttpResponse
 from django.conf import settings
 from django.core.files.storage import default_storage
 import os
@@ -12,13 +12,13 @@ def index(request):
         f=request.FILES['sentFile']
         original = readimg(f)
         col=""
-        label, col = klasifikasi(settings.MYMODEL, original, col)
-
-        response = {}
-        response['name'] = str(label)
-        response['img'] = f.read
-        response['color'] = col
-        return render(request,'index.html', response)
+        label, col = klasifikasi(settings.LUNGMODEL, original, col)
+        
+        response = {
+            "name":str(label),
+            "col":col
+        }
+        return JsonResponse(response)
     else:
         return render(request,'index.html')
 
@@ -44,13 +44,13 @@ def klasifikasi(model, image, col):
     y_prediksi=np.argmax(prediksi, axis=1)[0]
     kelas=["Adenocarsinoma","Normal","Squamous Cell Carcinoma"]
     if y_prediksi == 0:
-        col="orange"
+        col="warning"
         out=kelas[0]
     elif y_prediksi == 1:
-        col="green"
+        col="success"
         out=kelas[1]
     elif y_prediksi == 2:
-        col="red"
+        col="danger"
         out=kelas[2]
     return out,col
     
