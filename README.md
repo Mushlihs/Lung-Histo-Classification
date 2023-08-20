@@ -1,4 +1,4 @@
-# Lung-Histo-Classification
+# Lung-Histopathology-Cancer-Classification
 
 This app build with django and Tensorflow framework
 
